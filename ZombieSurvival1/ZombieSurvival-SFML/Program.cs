@@ -37,9 +37,11 @@ namespace ZombieSurvival_SFML
 		
 		static void Main(string[] args)
 		{
-			WINDOWSIZE = new Vector2u(640, 480);
+			window = new RenderWindow(VideoMode.DesktopMode, "Ascension", Styles.Fullscreen);
+			WINDOWSIZE = window.Size;
 			mousemiddle = new Vector2i((int)WINDOWSIZE.X/2, (int)WINDOWSIZE.Y/2);
-			window = new RenderWindow(new VideoMode(WINDOWSIZE.X, WINDOWSIZE.Y), "Ascension", Styles.None);
+			//window = new RenderWindow(new VideoMode(WINDOWSIZE.X, WINDOWSIZE.Y), "Ascension", Styles.Fullscreen);
+			
 			window.Closed += new EventHandler(window_Closed);
 			window.KeyPressed += new EventHandler<KeyEventArgs>(window_KeyPressed);
 			window.KeyReleased += new EventHandler<KeyEventArgs>(window_KeyReleased);

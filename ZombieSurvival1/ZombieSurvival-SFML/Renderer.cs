@@ -42,7 +42,7 @@ namespace ZombieSurvival_SFML
 			crosshaircolour = new Color(255,255,255,200);
 			windowsize = (Vector2i)WindowSize;
 			clock = new Clock();
-			minimappos = new IntRect((int)windowsize.X-100, 0, 100, 100);
+			minimappos = new IntRect((int)windowsize.X-200, 0, 200, 200);
 			random = new Random(DateTime.Now.GetHashCode());
 			rendertexture = new RenderTexture((uint)windowsize.X, (uint)windowsize.Y);
 			
@@ -130,18 +130,21 @@ namespace ZombieSurvival_SFML
 			//Draw sky
 			float xpos = (float)((player.GetAngleMod()/(2*Math.PI))*sky.Size.X);
 			Sprite sprite = new Sprite(sky, new IntRect((int)xpos, 0, windowsize.X, windowsize.Y));
-			
+			//Sprite sprite = new Sprite(sky, new IntRect((int)xpos, 0, (int)sky.Size.X/2, (int)sky.Size.Y));
+			sprite.Origin = new Vector2f(0,0);
 			//byte brightness = (byte)random.Next(200, 255);
 			skybrightness += (random.Next(150, 255) - skybrightness)>>4;
 			floorbrightness += (random.Next(200, 255) - floorbrightness)>>4;
 			byte brightness = (byte)skybrightness;
 			sprite.Color = new Color(brightness, brightness, brightness);
+			sprite.Scale = new Vector2f(1.0f, (float)windowsize.Y/(float)sky.Size.Y);
 			rendertexture.Draw(sprite);
 			
 			sprite = new Sprite(floor, new IntRect((int)xpos, 0, windowsize.X, windowsize.Y));
 			brightness = (byte)floorbrightness;
 			sprite.Color = new Color(brightness, brightness, brightness);
 			sprite.Position = new Vector2f(0, player.GetYView());
+			sprite.Scale = new Vector2f(1.0f, (float)windowsize.Y/(float)floor.Size.Y);
 			rendertexture.Draw(sprite);
 			
 			float px,py;
@@ -213,11 +216,9 @@ namespace ZombieSurvival_SFML
 			//frame.Color = new Color(10, 255, 10);
 			window.Draw(frame);
 			
-			
-			
 			//FPS
 			fps += (1000.0f/clock.Restart().AsMilliseconds() - fps)*0.5f;
-			Console.WriteLine("Avg FPS: " + fps);
+			//Console.WriteLine("Avg FPS: " + fps);
 		}
 		
 		void RenderPlayerOverlays(List<GameObject> objects, Player player){
@@ -229,8 +230,10 @@ namespace ZombieSurvival_SFML
 			//else sprite = new Sprite(fps2);
 			sprite = new Sprite(fps1);
 			//if(player.GetCurrentOverlay() == 2) sprite.Scale = new Vector2f(0.9f, 1.0f);
-			sprite.Scale = new Vector2f((float)player.GetHandMove(), 1.0f);
-			sprite.Position = new Vector2f(windowsize.X/2, windowsize.Y/2+40-player.GetYViewMove());
+			sprite.Scale = new Vector2f((float)player.GetHandMove()*(windowsize.X/fps1.Size.X), windowsize.Y/fps1.Size.Y);
+			//sprite.Scale = new Vector2f((windowsize.X/fps1.Size.X), windowsize.Y/fps1.Size.Y);
+			//sprite.Position = new Vector2f(windowsize.X/2, windowsize.Y/2+40-player.GetYViewMove());
+			sprite.Position = new Vector2f(windowsize.X/2, windowsize.Y/2+100-player.GetYViewMove());
 			//Weird ass walk scaling
 			//sprite.Scale = new Vector2f((float)(1+player.GetSineMove()*0.01), (float)(1+player.GetSineMove()*0.01));
 			sprite.Origin = new Vector2f(sprite.GetLocalBounds().Left + sprite.GetLocalBounds().Width/2, sprite.GetLocalBounds().Top + sprite.GetLocalBounds().Height/2);

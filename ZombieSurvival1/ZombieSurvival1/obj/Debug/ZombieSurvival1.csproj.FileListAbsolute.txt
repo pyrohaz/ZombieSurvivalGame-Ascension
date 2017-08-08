@@ -5,3 +5,10 @@ D:\Users\harri\Documents\SharpDevelop Projects\ZombieSurvival1\ZombieSurvival1\o
 D:\Users\harri\Documents\SharpDevelop Projects\ZombieSurvival1\ZombieSurvival1\obj\Debug\ZombieSurvival1.pdb
 D:\Users\harri\Documents\SharpDevelop Projects\ZombieSurvival1\ZombieSurvival1\obj\Debug\ZombieSurvival1.csproj.GenerateResource.Cache
 D:\Users\harri\Documents\SharpDevelop Projects\ZombieSurvival1\ZombieSurvival1\obj\Debug\ZombieSurvival1.ObjectRef.resources
+D:\Users\harri\Documents\SharpDevelop Projects\ZombieSurvivalGame-Ascension\ZombieSurvival1\ZombieSurvival1\bin\Debug\ZombieSurvival1.exe
+D:\Users\harri\Documents\SharpDevelop Projects\ZombieSurvivalGame-Ascension\ZombieSurvival1\ZombieSurvival1\bin\Debug\ZombieSurvival1.pdb
+D:\Users\harri\Documents\SharpDevelop Projects\ZombieSurvivalGame-Ascension\ZombieSurvival1\ZombieSurvival1\obj\Debug\ZombieSurvival1.csprojResolveAssemblyReference.cache
+D:\Users\harri\Documents\SharpDevelop Projects\ZombieSurvivalGame-Ascension\ZombieSurvival1\ZombieSurvival1\obj\Debug\ZombieSurvival1.ObjectRef.resources
+D:\Users\harri\Documents\SharpDevelop Projects\ZombieSurvivalGame-Ascension\ZombieSurvival1\ZombieSurvival1\obj\Debug\ZombieSurvival1.csproj.GenerateResource.Cache
+D:\Users\harri\Documents\SharpDevelop Projects\ZombieSurvivalGame-Ascension\ZombieSurvival1\ZombieSurvival1\obj\Debug\ZombieSurvival1.exe
+D:\Users\harri\Documents\SharpDevelop Projects\ZombieSurvivalGame-Ascension\ZombieSurvival1\ZombieSurvival1\obj\Debug\ZombieSurvival1.pdb

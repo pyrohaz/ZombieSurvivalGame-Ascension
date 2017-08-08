@@ -137,8 +137,8 @@ namespace ZombieSurvival_SFML
 			return minimaprange;
 		}
 		
-		double ObjectDistance(GameObject obj){
-			return Math.Sqrt(Math.Pow(obj.GetPosition().X-x,2) + Math.Pow(obj.GetPosition().Y-y,2));
+		double ObjectDistance(GameObject obj, Vector2i pos){
+			return Math.Sqrt(Math.Pow(obj.GetPosition().X-pos.X,2) + Math.Pow(obj.GetPosition().Y-pos.Y,2));
 		}
 		
 		void InventoryMenuHandler(ref List<GameObject> objects){
@@ -164,7 +164,7 @@ namespace ZombieSurvival_SFML
 		
 		public void MoveHandler(ref List<GameObject> objects){
 			double MOVE_SPEED = 3;
-			double lpx = x, lpy = y;
+			double lpx = x, lpy = y, xnew = x, ynew = y;
 			double rundbl = 0.0;
 			
 			if(jumpphase<Math.PI) jumpphase += Math.PI/20;
@@ -181,6 +181,8 @@ namespace ZombieSurvival_SFML
 					if(ud != 0 || lr != 0) stamina-=1;
 					if(stamina <= 0){
 						stamina = 0;
+						
+						//Comment out for unlimited run
 						//run = false;
 					}
 				}
@@ -191,13 +193,13 @@ namespace ZombieSurvival_SFML
 				//hp = 70;
 				
 				if(ud != 0){
-					x += (double)ud*Math.Cos(angle)*(MOVE_SPEED + rundbl*3);
-					y += (double)ud*Math.Sin(angle)*(MOVE_SPEED + rundbl*3);
+					xnew += (double)ud*Math.Cos(angle)*(MOVE_SPEED + rundbl*3);
+					ynew += (double)ud*Math.Sin(angle)*(MOVE_SPEED + rundbl*3);
 				}
 				
 				if(lr != 0){
-					x -= (double)lr*Math.Cos(angle-Math.PI/2)*(MOVE_SPEED + rundbl*3);
-					y -= (double)lr*Math.Sin(angle-Math.PI/2)*(MOVE_SPEED + rundbl*3);
+					xnew -= (double)lr*Math.Cos(angle-Math.PI/2)*(MOVE_SPEED + rundbl*3);
+					ynew -= (double)lr*Math.Sin(angle-Math.PI/2)*(MOVE_SPEED + rundbl*3);
 				}
 				
 				if(ud != 0 || lr != 0) movephase += 0.2 + rundbl/5;
@@ -206,14 +208,14 @@ namespace ZombieSurvival_SFML
 				//Ensure player isn't hitting any objects
 				bool hit = false;
 				for(int n = 0; n<objects.Count; n++){
-					if(ObjectDistance(objects[n])<10 && objects[n].GetVisible()){
+					if(ObjectDistance(objects[n], new Vector2i((int)xnew, (int)ynew))<10 && objects[n].GetVisible()){
 						hit = true;
 						break;
 					}
 				}
 				
-				if(x>PMAX[0] || x<PMIN[0] || hit) x = lpx;
-				if(y>PMAX[1] || y<PMIN[1] || hit) y = lpy;
+				if(xnew>PMAX[0] || xnew<PMIN[0] || hit) xnew = lpx;
+				if(ynew>PMAX[1] || ynew<PMIN[1] || hit) ynew = lpy;
 				
 				ItemHandler(objects);
 				
@@ -231,6 +233,9 @@ namespace ZombieSurvival_SFML
 				else if(handmove >= 1.0){
 					handmove = 1.0;
 				}
+				
+				x = xnew;
+				y = ynew;
 			}
 			else{
 				//Do object related menu stuff
@@ -279,7 +284,7 @@ namespace ZombieSurvival_SFML
 						invsubmenupos2 = -1;
 						break;
 					case Keyboard.Key.Space:
-						if(!showchar && stamina>10){
+						if(!showchar && stamina>10 && jumpphase == Math.PI){
 							jumpphase = 0;
 							stamina-=10;
 						}
@@ -299,14 +304,14 @@ namespace ZombieSurvival_SFML
 		
 		public void MouseHandler(int mousedx, int mousedy, int ymax){
 			if(!showchar){
-				if(mousedx > 0) angle += 0.04;
-				else if(mousedx<0) angle -= 0.04;
+				if(mousedx > 0) angle += 0.03;
+				else if(mousedx<0) angle -= 0.03;
 				
 				if(angle<0) angle += 2*Math.PI;
 				if(angle>2*Math.PI) angle -= 2*Math.PI;
 				
-				if(mousedy > 0)  yview -= 10;
-				else if(mousedy < 0)  yview += 10;
+				if(mousedy > 0)  yview -= 20;
+				else if(mousedy < 0)  yview += 20;
 				
 				if(yview>ymax) yview = ymax;
 				if(yview<0) yview = 0;
@@ -328,7 +333,7 @@ namespace ZombieSurvival_SFML
 		
 		void ItemHandler(List<GameObject> objects){
 			for(int n = 0; n<objects.Count; n++){
-				double dist = ObjectDistance(objects[n]);
+				double dist = ObjectDistance(objects[n], new Vector2i((int)x, (int)y));
 				
 				if(dist<20 && select && !objects[n].GetFixed() && objects[n].GetVisible()){
 					//Pick up object
@@ -361,7 +366,7 @@ namespace ZombieSurvival_SFML
 		public double FOV = 70.0*Math.PI/180.0;
 		//public double FOV = 90.0*Math.PI/180.0;
 		public double MAXVIEWDIST = 4000;
-		public int MAXINVENTORY = 1;
+		public int MAXINVENTORY = 5;
 		public int MAXSTAMINA = 100;
 		public int MAXHP = 100;
 		public int RESETINVENTORYFULLMAX = 40;
