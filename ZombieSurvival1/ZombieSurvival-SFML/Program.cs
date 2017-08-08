@@ -37,7 +37,9 @@ namespace ZombieSurvival_SFML
 		
 		static void Main(string[] args)
 		{
+			//Native screen resolution
 			window = new RenderWindow(VideoMode.DesktopMode, "Ascension", Styles.Fullscreen);
+			//window = new RenderWindow(new VideoMode(1024, 768), "Ascension", Styles.None);
 			WINDOWSIZE = window.Size;
 			mousemiddle = new Vector2i((int)WINDOWSIZE.X/2, (int)WINDOWSIZE.Y/2);
 			//window = new RenderWindow(new VideoMode(WINDOWSIZE.X, WINDOWSIZE.Y), "Ascension", Styles.Fullscreen);

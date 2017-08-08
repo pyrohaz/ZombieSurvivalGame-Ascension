@@ -41,8 +41,9 @@ namespace ZombieSurvival_SFML
 			textbackcolour = new Color(50,50,50,200);
 			crosshaircolour = new Color(255,255,255,200);
 			windowsize = (Vector2i)WindowSize;
+			textsize = (uint)(16*windowsize.X/1000);
 			clock = new Clock();
-			minimappos = new IntRect((int)windowsize.X-200, 0, 200, 200);
+			minimappos = new IntRect((int)windowsize.X-windowsize.X/6, 0, windowsize.X/6, windowsize.X/6);
 			random = new Random(DateTime.Now.GetHashCode());
 			rendertexture = new RenderTexture((uint)windowsize.X, (uint)windowsize.Y);
 			
@@ -200,7 +201,7 @@ namespace ZombieSurvival_SFML
 				sprite.Position = new Vector2f(drawx, drawy);
 				//Decrease object brightness for further objects
 				//byte brightness = (byte)(255*Math.Pow(1.0-playerpointdist/player.GetMaxDistance(), 2));
-				brightness = (byte)(255*Math.Pow(1.0-playerpointdist/player.MAXVIEWDIST, 2));
+				brightness = (byte)(255*Math.Pow(1.0-playerpointdist/player.MAXVIEWDIST, 1));
 				sprite.Color = new Color(brightness, brightness, brightness);
 				//Draw image
 				rendertexture.Draw(sprite);
@@ -233,7 +234,10 @@ namespace ZombieSurvival_SFML
 			sprite.Scale = new Vector2f((float)player.GetHandMove()*(windowsize.X/fps1.Size.X), windowsize.Y/fps1.Size.Y);
 			//sprite.Scale = new Vector2f((windowsize.X/fps1.Size.X), windowsize.Y/fps1.Size.Y);
 			//sprite.Position = new Vector2f(windowsize.X/2, windowsize.Y/2+40-player.GetYViewMove());
-			sprite.Position = new Vector2f(windowsize.X/2, windowsize.Y/2+100-player.GetYViewMove());
+			
+			//FPS texture scale is weird - origin is centre (for click scale majiggy) but that means that screen scaling breaks the texture
+			//TODO: Sort at some point....
+			sprite.Position = new Vector2f(windowsize.X/2, windowsize.Y/2+windowsize.Y/10-player.GetYViewMove());
 			//Weird ass walk scaling
 			//sprite.Scale = new Vector2f((float)(1+player.GetSineMove()*0.01), (float)(1+player.GetSineMove()*0.01));
 			sprite.Origin = new Vector2f(sprite.GetLocalBounds().Left + sprite.GetLocalBounds().Width/2, sprite.GetLocalBounds().Top + sprite.GetLocalBounds().Height/2);
@@ -251,11 +255,11 @@ namespace ZombieSurvival_SFML
 			
 			if(player.GetShowInventory()){
 				invtextbackcolour = new Color(20,180,20,150);
-				text = new Text(inv, textfont, 16);
+				text = new Text(inv, textfont, textsize);
 			}
 			else{
 				invtextbackcolour = new Color(180,20,20,150);
-				text = new Text("Inventory", textfont, 16);
+				text = new Text("Inventory", textfont, textsize);
 			}
 			
 			text.Color = textcolour;
@@ -279,38 +283,42 @@ namespace ZombieSurvival_SFML
 			text.Origin = new Vector2f(text.GetLocalBounds().Left, text.GetLocalBounds().Top);
 			
 			int xstart = (int)(text.GetLocalBounds().Left + text.GetLocalBounds().Width);
+			int linesize = 100*windowsize.X/640;
+			int rectsize = 105*windowsize.X/640;
 			rect.Position = new Vector2f(0,0);
-			rect.Size = new Vector2f(text.GetLocalBounds().Left + text.GetLocalBounds().Width+105, text.GetLocalBounds().Top + text.GetLocalBounds().Height);
+			rect.Size = new Vector2f(text.GetLocalBounds().Left + text.GetLocalBounds().Width+rectsize, text.GetLocalBounds().Top + text.GetLocalBounds().Height+5);
 			rect.FillColor = textbackcolour;
 			
 			//text.DisplayedString = "HP: " + player.GetHP() + "/" + player.MAXHP + "\nStamina: " + player.GetStamina() + "/" + player.MAXSTAMINA;
 			rendertexture.Draw(rect);
 			rendertexture.Draw(text);
 			
+			
+			
 			//HP
 			rect.Position = new Vector2f(xstart, 0);
-			rect.Size = new Vector2f(player.GetHP()*100/player.MAXHP, text.GetLocalBounds().Height/2);
+			rect.Size = new Vector2f(player.GetHP()*linesize/player.MAXHP, text.GetLocalBounds().Height/2);
 			rect.FillColor = new Color(0,200,0);
 			rendertexture.Draw(rect);
 			
-			rect.Position = new Vector2f(xstart+player.GetHP()*100/player.MAXHP, 0);
-			rect.Size = new Vector2f(100-player.GetHP()*100/player.MAXHP, text.GetLocalBounds().Height/2);
+			rect.Position = new Vector2f(xstart+player.GetHP()*linesize/player.MAXHP, 0);
+			rect.Size = new Vector2f(linesize-player.GetHP()*linesize/player.MAXHP, text.GetLocalBounds().Height/2);
 			rect.FillColor = new Color(200,0,0);
 			rendertexture.Draw(rect);
 			
 			//Stamina
 			rect.Position = new Vector2f(xstart, text.GetLocalBounds().Top+text.GetLocalBounds().Height/2);
-			rect.Size = new Vector2f(player.GetStamina()*100/player.MAXSTAMINA, text.GetLocalBounds().Height/2);
+			rect.Size = new Vector2f(player.GetStamina()*linesize/player.MAXSTAMINA, text.GetLocalBounds().Height/2);
 			rect.FillColor = new Color(0,50,255);
 			rendertexture.Draw(rect);
 			
-			rect.Position = new Vector2f(xstart+player.GetStamina()*100/player.MAXSTAMINA, text.GetLocalBounds().Top+text.GetLocalBounds().Height/2);
-			rect.Size = new Vector2f(100-player.GetStamina()*100/player.MAXSTAMINA, text.GetLocalBounds().Height/2);
+			rect.Position = new Vector2f(xstart+player.GetStamina()*linesize/player.MAXSTAMINA, text.GetLocalBounds().Top+text.GetLocalBounds().Height/2);
+			rect.Size = new Vector2f(linesize-player.GetStamina()*linesize/player.MAXSTAMINA, text.GetLocalBounds().Height/2);
 			rect.FillColor = new Color(0,0,100);
 			rendertexture.Draw(rect);
 			
 			if(player.GetResetInventoryFull()>0){
-				text = new Text("Inventory full", textfont, 16);
+				text = new Text("Inventory full", textfont, textsize);
 				txtsize = text.GetLocalBounds();
 				text.Origin = new Vector2f(txtsize.Left + txtsize.Width/2, 0);
 				text.Position = new Vector2f(windowsize.X/2, 0);
@@ -324,7 +332,7 @@ namespace ZombieSurvival_SFML
 			}
 			
 			if(player.GetShowChar()){
-				text = new Text(inv, textfont, 16);
+				text = new Text(inv, textfont, textsize);
 				txtsize = text.GetLocalBounds();
 				text.Origin = new Vector2f(txtsize.Left + txtsize.Width/2, 0);
 				text.Position = new Vector2f(windowsize.X/2, 0);
@@ -338,7 +346,7 @@ namespace ZombieSurvival_SFML
 				
 				if(player.GetInvSubmenuPos() != -1){
 					string txt = " 1: Drop\n 2: Combine\n 3: Discard";
-					Text text2 = new Text(txt, textfont, 16);
+					Text text2 = new Text(txt, textfont, textsize);
 					text2.Color = textcolour;
 					FloatRect txtsize2 = text2.GetLocalBounds();
 					text2.Origin = new Vector2f(txtsize2.Left, 0);
@@ -416,6 +424,7 @@ namespace ZombieSurvival_SFML
 		RenderTexture rendertexture;
 		
 		int skybrightness, floorbrightness;
+		uint textsize;
 		
 		Clock clock;
 		float fps;
