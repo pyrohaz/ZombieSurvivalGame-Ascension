@@ -1,0 +1,9 @@
+D:\Users\harri\Documents\SharpDevelop Projects\ZombieSurvival1\ZombieSurvival-SFML\obj\Debug\ZombieSurvival-SFML.csprojResolveAssemblyReference.cache
+D:\Users\harri\Documents\SharpDevelop Projects\ZombieSurvival1\ZombieSurvival-SFML\bin\Debug\ZombieSurvival-SFML.exe
+D:\Users\harri\Documents\SharpDevelop Projects\ZombieSurvival1\ZombieSurvival-SFML\bin\Debug\ZombieSurvival-SFML.pdb
+D:\Users\harri\Documents\SharpDevelop Projects\ZombieSurvival1\ZombieSurvival-SFML\obj\Debug\ZombieSurvival-SFML.exe
+D:\Users\harri\Documents\SharpDevelop Projects\ZombieSurvival1\ZombieSurvival-SFML\obj\Debug\ZombieSurvival-SFML.pdb
+D:\Users\harri\Documents\SharpDevelop Projects\ZombieSurvival1\ZombieSurvival-SFML\bin\Debug\sfmlnet-audio-2.dll
+D:\Users\harri\Documents\SharpDevelop Projects\ZombieSurvival1\ZombieSurvival-SFML\bin\Debug\sfmlnet-graphics-2.dll
+D:\Users\harri\Documents\SharpDevelop Projects\ZombieSurvival1\ZombieSurvival-SFML\bin\Debug\sfmlnet-system-2.dll
+D:\Users\harri\Documents\SharpDevelop Projects\ZombieSurvival1\ZombieSurvival-SFML\bin\Debug\sfmlnet-window-2.dll
