@@ -12,6 +12,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Reflection;
 using System.Text;
+using System.Threading;
 using System.Windows.Forms;
 using System.Xml;
 
@@ -29,6 +30,8 @@ namespace GameMapGenT1
 	{
 		List<int> controldists = new List<int>();
 		int panelcontroldist;
+		
+		Random random;
 		public MainForm()
 		{
 			//
@@ -38,6 +41,7 @@ namespace GameMapGenT1
 			
 			typeof(Panel).InvokeMember("DoubleBuffered", BindingFlags.SetProperty | BindingFlags.Instance | BindingFlags.NonPublic, null, panel, new object[] { true });
 			
+			random = new Random(DateTime.Now.GetHashCode());
 			
 			TabPage tb = new TabPage("Player");
 			tabControl_img.TabPages.Add(tb);
@@ -254,6 +258,10 @@ namespace GameMapGenT1
 		
 		int PointDist(Point p1, Point p2){
 			return (int)Math.Sqrt(Math.Pow(p1.X-p2.X, 2) + Math.Pow(p1.Y-p2.Y, 2));
+		}
+		
+		int FastPointDist(Point p1, Point p2){
+			return Math.Abs(p1.X-p2.X)+Math.Abs(p1.Y-p2.Y);
 		}
 		
 		void DrawObjects(bool clear){
@@ -512,6 +520,7 @@ namespace GameMapGenT1
 			DrawObjects(true);
 		}
 		
+		
 		void Button_randomClick(object sender, EventArgs e)
 		{
 			Form prompt = new Form();
@@ -551,34 +560,7 @@ namespace GameMapGenT1
 				success &= int.TryParse(tb.Text, out num);
 				
 				if(success){
-					Random random = new Random(DateTime.Now.GetHashCode());
-					for(int n = 0; n<num; n++){
-						int xp = 0, yp = 0;
-						bool ok = false;
-						
-						do{
-							//xp = (random.Next()%(xmax-xmin))+xmin;
-							//yp = (random.Next()%(ymax-ymin))+ymin;
-							xp = random.Next()%xsize;
-							yp = random.Next()%ysize;
-							
-							//Ensure object is atleast 10 away
-							bool close = false;
-							for(int m = 0; m<mapobjs.Count; m++){
-								if(PointDist(new Point(xp, yp), mapobjs[m].point)<10){
-									close = true;
-								}
-							}
-							
-							if(!close){
-								ok = true;
-								AddObject(new Point(xp,yp));
-							}
-						}
-						while(!ok);
-					}
-					
-					DrawObjects(false);
+					GenerateRandomObjects(num);
 					prompt.Close();
 				}
 				else{
@@ -587,6 +569,38 @@ namespace GameMapGenT1
 			};
 			
 			prompt.ShowDialog();
+		}
+		
+		void GenerateRandomObjects(int num){
+			for(int n = 0; n<num; n++){
+				int xp = 0, yp = 0;
+				bool ok = false;
+				
+				do{
+					//xp = (random.Next()%(xmax-xmin))+xmin;
+					//yp = (random.Next()%(ymax-ymin))+ymin;
+					xp = random.Next()%xsize;
+					yp = random.Next()%ysize;
+					
+					//Ensure object is atleast 10 away
+					bool close = false;
+					for(int m = 0; m<mapobjs.Count; m++){
+						//if(PointDist(new Point(xp, yp), mapobjs[m].point)<10){
+						if(FastPointDist(new Point(xp, yp), mapobjs[m].point)<10){
+							close = true;
+							break;
+						}
+					}
+					
+					if(!close){
+						ok = true;
+						AddObject(new Point(xp,yp));
+					}
+				}
+				while(!ok);
+			}
+			
+			DrawObjects(false);
 		}
 		
 		void MainFormResize(object sender, EventArgs e)
