@@ -25,7 +25,7 @@ namespace ZombieSurvival_SFML
 		}
 		
 		//public GameObject(string TextureF, string Name, Vector2i Position, bool Fixed, int ID){
-		public GameObject(int TextureReference, string Name, Vector2i Position, bool Fixed, int ID){
+		public GameObject(int TextureReference, string Name, Vector2f Position, bool Fixed, int ID){
 			//image = new Texture(TextureF);
 			
 			//Interpolate scaling
@@ -47,7 +47,7 @@ namespace ZombieSurvival_SFML
 			return texturereference;
 		}
 		
-		public Vector2i GetPosition(){
+		public Vector2f GetPosition(){
 			return position;
 		}
 		
@@ -68,7 +68,7 @@ namespace ZombieSurvival_SFML
 			return name;
 		}
 		
-		public void SetPosition(Vector2i Position){
+		public void SetPosition(Vector2f Position){
 			position = Position;
 		}
 		
@@ -80,7 +80,7 @@ namespace ZombieSurvival_SFML
 		//Texture image;
 		string name;
 		bool fixedobj, visible;
-		Vector2i position;
+		Vector2f position;
 		int id, texturereference;
 	}
 }

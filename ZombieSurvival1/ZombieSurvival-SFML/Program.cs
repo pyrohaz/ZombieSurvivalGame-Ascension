@@ -39,7 +39,9 @@ namespace ZombieSurvival_SFML
 		{
 			//Native screen resolution
 			window = new RenderWindow(VideoMode.DesktopMode, "Ascension", Styles.Fullscreen);
-			//window = new RenderWindow(new VideoMode(1024, 768), "Ascension", Styles.None);
+			
+			//Non fullscreen
+			//window = new RenderWindow(new VideoMode(800, 600), "Ascension", Styles.None);
 			WINDOWSIZE = window.Size;
 			mousemiddle = new Vector2i((int)WINDOWSIZE.X/2, (int)WINDOWSIZE.Y/2);
 			//window = new RenderWindow(new VideoMode(WINDOWSIZE.X, WINDOWSIZE.Y), "Ascension", Styles.Fullscreen);
@@ -58,10 +60,10 @@ namespace ZombieSurvival_SFML
 			player.SetYView((int)WINDOWSIZE.Y/2);
 			
 			renderer = new Renderer(WINDOWSIZE);
-			renderer.LoadSky("sky.png");
-			renderer.LoadFloor("floor.png");
-			renderer.LoadFPSOverlay1("fpshands1.png");
-			renderer.LoadFPSOverlay2("fpshands2.png");
+			renderer.LoadSky("../../../../Objects/sky.png");
+			renderer.LoadFloor("../../../../Objects/floor.png");
+			renderer.LoadFPSOverlay1("../../../../Objects/fpshands1.png");
+			renderer.LoadFPSOverlay2("../../../../Objects/fpshands2.png");
 			
 			window.SetFramerateLimit(30);
 			window.SetVerticalSyncEnabled(true);
@@ -95,7 +97,7 @@ namespace ZombieSurvival_SFML
 		
 		static int LoadInfoXML(){
 			XmlDocument xmldoc = new XmlDocument();
-			xmldoc.Load("map.xml");
+			xmldoc.Load("../../../../Objects/map.xml");
 			
 			//Parse map options
 			XmlNodeList xmllist = xmldoc.GetElementsByTagName("mapoptions")[0].ChildNodes;
@@ -155,7 +157,7 @@ namespace ZombieSurvival_SFML
 					}
 				}
 				//objectrefs.Add(objref);
-				objectrefs.Add(new ObjectReference(filename, name, id));
+				objectrefs.Add(new ObjectReference("../../../../Objects/" + filename, name, id));
 			}
 			
 			//Parse map objects
@@ -187,7 +189,7 @@ namespace ZombieSurvival_SFML
 					bool fixedobj = false;
 					if(objfixed != 0) fixedobj = true;
 					//gameobjects.Add(new GameObject(objectrefs[refpos].filename, objectrefs[refpos].name, new Vector2i(objx, objy), fixedobj, objid));
-					gameobjects.Add(new GameObject(objectrefs[refpos].GetID(), objectrefs[refpos].GetName(), new Vector2i(objx, objy), fixedobj, objid));
+					gameobjects.Add(new GameObject(objectrefs[refpos].GetID(), objectrefs[refpos].GetName(), new Vector2f(objx, objy), fixedobj, objid));
 				}
 				else{
 					//Object reference not found

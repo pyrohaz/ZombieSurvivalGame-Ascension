@@ -56,8 +56,8 @@ namespace ZombieSurvival_SFML
 			Y = y;
 		}
 		
-		public Vector2i GetPosition(){
-			return new Vector2i((int)x,(int)y);
+		public Vector2f GetPosition(){
+			return new Vector2f((float)x,(float)y);
 		}
 		
 		public void GetMapBounds(out int[] min, out int[] max){
@@ -137,7 +137,11 @@ namespace ZombieSurvival_SFML
 			return minimaprange;
 		}
 		
-		double ObjectDistance(GameObject obj, Vector2i pos){
+		public bool GetHitting(){
+			return hitting;
+		}
+		
+		double ObjectDistance(GameObject obj, Vector2f pos){
 			return Math.Sqrt(Math.Pow(obj.GetPosition().X-pos.X,2) + Math.Pow(obj.GetPosition().Y-pos.Y,2));
 		}
 		
@@ -145,7 +149,7 @@ namespace ZombieSurvival_SFML
 			if(inventory.Count>0){
 				if(invsubmenupos2 == 0){
 					//Drop
-					objects.Find(obj => obj.GetID() == inventory[invsubmenupos]).SetPosition(new Vector2i((int)(x+Math.Cos(angle)*10), (int)(y+Math.Sin(angle)*10)));
+					objects.Find(obj => obj.GetID() == inventory[invsubmenupos]).SetPosition(new Vector2f((int)(x+Math.Cos(angle)*10), (int)(y+Math.Sin(angle)*10)));
 					objects.Find(obj => obj.GetID() == inventory[invsubmenupos]).SetVisible(true);
 					inventory.RemoveAt(invsubmenupos);
 				}
@@ -163,7 +167,6 @@ namespace ZombieSurvival_SFML
 		}
 		
 		public void MoveHandler(ref List<GameObject> objects){
-			double MOVE_SPEED = 3;
 			double lpx = x, lpy = y, xnew = x, ynew = y;
 			double rundbl = 0.0;
 			
@@ -193,13 +196,13 @@ namespace ZombieSurvival_SFML
 				//hp = 70;
 				
 				if(ud != 0){
-					xnew += (double)ud*Math.Cos(angle)*(MOVE_SPEED + rundbl*3);
-					ynew += (double)ud*Math.Sin(angle)*(MOVE_SPEED + rundbl*3);
+					xnew += (double)ud*Math.Cos(angle)*(MOVESPEED + rundbl*MOVESPEED);
+					ynew += (double)ud*Math.Sin(angle)*(MOVESPEED + rundbl*MOVESPEED);
 				}
 				
 				if(lr != 0){
-					xnew -= (double)lr*Math.Cos(angle-Math.PI/2)*(MOVE_SPEED + rundbl*3);
-					ynew -= (double)lr*Math.Sin(angle-Math.PI/2)*(MOVE_SPEED + rundbl*3);
+					xnew -= (double)lr*Math.Cos(angle-Math.PI/2)*(MOVESPEED + rundbl*MOVESPEED);
+					ynew -= (double)lr*Math.Sin(angle-Math.PI/2)*(MOVESPEED + rundbl*MOVESPEED);
 				}
 				
 				if(ud != 0 || lr != 0) movephase += 0.2 + rundbl/5;
@@ -208,11 +211,14 @@ namespace ZombieSurvival_SFML
 				//Ensure player isn't hitting any objects
 				bool hit = false;
 				for(int n = 0; n<objects.Count; n++){
-					if(ObjectDistance(objects[n], new Vector2i((int)xnew, (int)ynew))<10 && objects[n].GetVisible()){
+					//if(ObjectDistance(objects[n], new Vector2i((int)xnew, (int)ynew))<10 && objects[n].GetVisible()){
+					if(((ObjectDistance(objects[n], new Vector2f((int)xnew, (int)ynew))<7 && !objects[n].GetFixed()) || (ObjectDistance(objects[n], new Vector2f((int)xnew, (int)ynew))<10 && objects[n].GetFixed()))  && objects[n].GetVisible()){
 						hit = true;
 						break;
 					}
 				}
+				
+				hitting = hit;
 				
 				if(xnew>PMAX[0] || xnew<PMIN[0] || hit) xnew = lpx;
 				if(ynew>PMAX[1] || ynew<PMIN[1] || hit) ynew = lpy;
@@ -304,8 +310,8 @@ namespace ZombieSurvival_SFML
 		
 		public void MouseHandler(int mousedx, int mousedy, int ymax){
 			if(!showchar){
-				if(mousedx > 0) angle += 0.03;
-				else if(mousedx<0) angle -= 0.03;
+				if(mousedx > 0) angle += 0.02;
+				else if(mousedx<0) angle -= 0.02;
 				
 				if(angle<0) angle += 2*Math.PI;
 				if(angle>2*Math.PI) angle -= 2*Math.PI;
@@ -333,7 +339,7 @@ namespace ZombieSurvival_SFML
 		
 		void ItemHandler(List<GameObject> objects){
 			for(int n = 0; n<objects.Count; n++){
-				double dist = ObjectDistance(objects[n], new Vector2i((int)x, (int)y));
+				double dist = ObjectDistance(objects[n], new Vector2f((int)x, (int)y));
 				
 				if(dist<20 && select && !objects[n].GetFixed() && objects[n].GetVisible()){
 					//Pick up object
@@ -358,7 +364,7 @@ namespace ZombieSurvival_SFML
 		int minimaprange;
 		int[] PMAX, PMIN;
 		
-		bool showinv = false, showchar = false, run = false, select = false;
+		bool showinv = false, showchar = false, run = false, select = false, hitting = false;
 		int invsubmenupos = -1, invsubmenupos2 = -1, overlay = 1;
 		List<int> inventory;
 		int invfull = 0;
@@ -366,6 +372,7 @@ namespace ZombieSurvival_SFML
 		public double FOV = 70.0*Math.PI/180.0;
 		//public double FOV = 90.0*Math.PI/180.0;
 		public double MAXVIEWDIST = 4000;
+		public double MOVESPEED = 1.5;
 		public int MAXINVENTORY = 5;
 		public int MAXSTAMINA = 100;
 		public int MAXHP = 100;

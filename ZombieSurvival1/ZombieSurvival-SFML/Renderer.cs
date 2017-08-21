@@ -36,7 +36,8 @@ namespace ZombieSurvival_SFML
 		
 		public Renderer(Vector2u WindowSize)
 		{
-			textfont = new Font("Lato.ttf");
+			//textfont = new Font("Lato.ttf");
+			textfont = new Font("../../../../Objects/Lato.ttf");
 			textcolour = new Color(255,255,255);
 			textbackcolour = new Color(50,50,50,200);
 			crosshaircolour = new Color(255,255,255,200);
@@ -69,11 +70,11 @@ namespace ZombieSurvival_SFML
 		}
 		
 		//Point in triangle functions
-		float sign (Vector2i p1, Vector2i p2, Vector2i p3){
+		float sign (Vector2f p1, Vector2f p2, Vector2f p3){
 			return (p1.X - p3.X) * (p2.Y - p3.Y) - (p2.X - p3.X) * (p1.Y - p3.Y);
 		}
 
-		bool PointInTriangle (Vector2i pt, Vector2i v1, Vector2i v2, Vector2i v3){
+		bool PointInTriangle (Vector2f pt, Vector2f v1, Vector2f v2, Vector2f v3){
 			bool b1, b2, b3;
 
 			b1 = sign(pt, v1, v2) < 0.0f;
@@ -84,7 +85,7 @@ namespace ZombieSurvival_SFML
 		}
 		
 		//Distance between two points
-		double PointDistance(Vector2i p1, Vector2i p2){
+		double PointDistance(Vector2f p1, Vector2f p2){
 			return Math.Sqrt(Math.Pow((double)(p1.X-p2.X),2) + Math.Pow((double)(p1.Y-p2.Y),2));
 		}
 		
@@ -100,10 +101,10 @@ namespace ZombieSurvival_SFML
 			List<RenderObject> renderobjs = new List<Renderer.RenderObject>();
 			
 			//Generate view triangle with top vertex being player
-			Vector2i tp = player.GetPosition();
+			Vector2f tp = player.GetPosition();
 			//Left and right vertices
-			Vector2i tl = new Vector2i((int)(tp.X+Math.Cos(player.GetAngle()-player.FOV/2)*player.MAXVIEWDIST), (int)(tp.Y+Math.Sin(player.GetAngle()-player.FOV/2)*player.MAXVIEWDIST));
-			Vector2i tr = new Vector2i((int)(tp.X+Math.Cos(player.GetAngle()+player.FOV/2)*player.MAXVIEWDIST), (int)(tp.Y+Math.Sin(player.GetAngle()+player.FOV/2)*player.MAXVIEWDIST));
+			Vector2f tl = new Vector2f((float)(tp.X+Math.Cos(player.GetAngle()-player.FOV/2)*player.MAXVIEWDIST), (float)(tp.Y+Math.Sin(player.GetAngle()-player.FOV/2)*player.MAXVIEWDIST));
+			Vector2f tr = new Vector2f((float)(tp.X+Math.Cos(player.GetAngle()+player.FOV/2)*player.MAXVIEWDIST), (float)(tp.Y+Math.Sin(player.GetAngle()+player.FOV/2)*player.MAXVIEWDIST));
 			
 			//Find all objects in view
 			for(int n = 0; n<objects.Count; n++){
@@ -154,12 +155,12 @@ namespace ZombieSurvival_SFML
 			for(int n = 0; n<renderobjs.Count; n++){
 				//for(int n = 0; n<0; n++){
 				int objindex = renderobjs[n].index;
-				bool draw = true;
 				
 				px = (float)tp.X;
 				py = (float)tp.Y;
 				
-				Vector2i objpos = objects[objindex].GetPosition();
+				//Vector2f objpos = new Vector2f(objects[objindex].GetPosition().X, objects[objindex].GetPosition().Y);
+				Vector2f objpos = objects[objindex].GetPosition();;
 				
 				//Distance from player to object
 				float playerpointdist = (float)renderobjs[n].distance;
@@ -173,17 +174,18 @@ namespace ZombieSurvival_SFML
 				//Difference between the two
 				float langle = line2angle-line1angle;
 				//Wrap
-				if(langle<0) langle += (float) Math.PI*2;
+				if(langle<0) langle += (float)Math.PI*2;
 				
 				//Calculate image scale dependent on distance to player
 				//scale = 1.0/(0.003*Math.Cos(player.FOV/2-langle)*playerpointdist);
-				scale = (float)(1.0f/(0.003*Math.Cos(player.FOV/2-langle)*playerpointdist));
+				//scale = (float)(1.0f/(0.003*Math.Cos(player.FOV/2-langle)*playerpointdist));
+				scale = (float)(1.0f/(0.02*Math.Cos(player.FOV/2-langle)*playerpointdist));
 				
 				//Grab image with draw widths and height
 				//Texture im = objects[objindex].GetImage();
 				Texture im = objref.Find(obj => obj.GetID() == objects[objindex].GetTextureReference()).GetTexture();
-				float imh = im.Size.Y*scale/2;
-				float imw = im.Size.X*scale/2;
+				float imh = (float)im.Size.Y*scale/2;
+				float imw = (float)im.Size.X*scale/2;
 				
 				//Physical draw distance on the screen
 				//As you get closer to objects, make them appear lower in the screen
@@ -194,11 +196,17 @@ namespace ZombieSurvival_SFML
 				drawy = (float)((player.GetYView()+1)-(imh*(0.8+0.2*playerpointdist/player.GetMaxDistance())));
 				
 				//double drawy = player.GetYView()+1-imh;
-				float drawx = (float)(langle*windowsize.X/player.FOV - (imw/2));
+				float drawx = (float)(langle*(float)windowsize.X/player.FOV - (imw/2));
 				
 				sprite = new Sprite(im);
 				sprite.Scale = new Vector2f(imw/(float)im.Size.X, imh/(float)im.Size.Y);
 				sprite.Position = new Vector2f(drawx, drawy);
+				//sprite.Origin = new Vector2f(sprite.Texture.Size.X/2, 0);
+				
+				//Set reference point dependent on angle within viewing triangle from player vertex
+				//Note: Seems to add issues with object jitter and lower frame rate
+				//sprite.Origin = new Vector2f((float)(sprite.Texture.Size.X*(1-langle/player.FOV)), 0);
+				
 				//Decrease object brightness for further objects
 				//byte brightness = (byte)(255*Math.Pow(1.0-playerpointdist/player.GetMaxDistance(), 2));
 				brightness = (byte)(255*Math.Pow(1.0-playerpointdist/player.MAXVIEWDIST, 1));
@@ -210,6 +218,15 @@ namespace ZombieSurvival_SFML
 			RenderPlayerOverlays(objects, player);
 			RenderMiniMap(minimappos, objects, player);
 			
+			//FPS
+			fps += (1000.0f/clock.Restart().AsMilliseconds() - fps)*0.1f;
+			//Console.WriteLine("Avg FPS: " + fps);
+			Text text = new Text("FPS: " + fps.ToString(), textfont);
+			text.Color = new Color(255,255,0);
+			text.CharacterSize = 16;
+			text.Position = new Vector2f(0, windowsize.Y/2);
+			rendertexture.Draw(text);
+			
 			Sprite frame = new Sprite(rendertexture.Texture);
 			//frame.Origin = new Vector2f(frame.GetLocalBounds().Left + frame.GetLocalBounds().Width/2, frame.GetLocalBounds().Top + frame.GetLocalBounds().Height/2);
 			//frame.Scale = new Vector2f(1.0f, -1.0f);
@@ -217,9 +234,7 @@ namespace ZombieSurvival_SFML
 			//frame.Color = new Color(10, 255, 10);
 			window.Draw(frame);
 			
-			//FPS
-			fps += (1000.0f/clock.Restart().AsMilliseconds() - fps)*0.5f;
-			//Console.WriteLine("Avg FPS: " + fps);
+			
 		}
 		
 		void RenderPlayerOverlays(List<GameObject> objects, Player player){
@@ -292,8 +307,6 @@ namespace ZombieSurvival_SFML
 			//text.DisplayedString = "HP: " + player.GetHP() + "/" + player.MAXHP + "\nStamina: " + player.GetStamina() + "/" + player.MAXSTAMINA;
 			rendertexture.Draw(rect);
 			rendertexture.Draw(text);
-			
-			
 			
 			//HP
 			rect.Position = new Vector2f(xstart, 0);
@@ -388,8 +401,8 @@ namespace ZombieSurvival_SFML
 						fillcol = new Color(0, 0, 200);
 					}
 					
-					int objx = (objects[n].GetPosition().X-player.GetPosition().X)*size.Width/(MINIMAPRANGE*2) + size.Width/2 + size.Left;
-					int objy = (objects[n].GetPosition().Y-player.GetPosition().Y)*size.Height/(MINIMAPRANGE*2) + size.Height/2 + size.Top;
+					float objx = (objects[n].GetPosition().X-player.GetPosition().X)*size.Width/(MINIMAPRANGE*2) + size.Width/2 + size.Left;
+					float objy = (objects[n].GetPosition().Y-player.GetPosition().Y)*size.Height/(MINIMAPRANGE*2) + size.Height/2 + size.Top;
 					
 					circle.FillColor = fillcol;
 					circle.Position = new Vector2f(objx, objy);
