@@ -141,6 +141,10 @@ namespace ZombieSurvival_SFML
 			return hitting;
 		}
 		
+		public float GetFloorMovement(){
+			return -floormovement;
+		}
+		
 		double ObjectDistance(GameObject obj, Vector2f pos){
 			return Math.Sqrt(Math.Pow(obj.GetPosition().X-pos.X,2) + Math.Pow(obj.GetPosition().Y-pos.Y,2));
 		}
@@ -189,6 +193,8 @@ namespace ZombieSurvival_SFML
 						//run = false;
 					}
 				}
+				
+				floormovement += ud;
 				
 				if(stamina<MAXSTAMINA && ((ud==0 && lr==0) || !run)) stamina++;
 				
@@ -311,7 +317,7 @@ namespace ZombieSurvival_SFML
 		public void MouseHandler(int mousedx, int mousedy, int ymax){
 			if(!showchar){
 				if(mousedx > 0) angle += 0.02;
-				else if(mousedx<0) angle -= 0.02;
+				else if(mousedx < 0) angle -= 0.02;
 				
 				if(angle<0) angle += 2*Math.PI;
 				if(angle>2*Math.PI) angle -= 2*Math.PI;
@@ -368,6 +374,8 @@ namespace ZombieSurvival_SFML
 		int invsubmenupos = -1, invsubmenupos2 = -1, overlay = 1;
 		List<int> inventory;
 		int invfull = 0;
+		
+		float floormovement = 0.0f;
 		
 		public double FOV = 70.0*Math.PI/180.0;
 		//public double FOV = 90.0*Math.PI/180.0;

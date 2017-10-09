@@ -130,7 +130,7 @@ namespace ZombieSurvival_SFML
 			
 			
 			//Draw sky
-			float xpos = (float)((player.GetAngleMod()/(2*Math.PI))*sky.Size.X);
+			float xpos = (float)((int)(((player.GetAngleMod()/(2*Math.PI))*sky.Size.X)*10))%sky.Size.X;
 			Sprite sprite = new Sprite(sky, new IntRect((int)xpos, 0, windowsize.X, windowsize.Y));
 			//Sprite sprite = new Sprite(sky, new IntRect((int)xpos, 0, (int)sky.Size.X/2, (int)sky.Size.Y));
 			sprite.Origin = new Vector2f(0,0);
@@ -142,7 +142,10 @@ namespace ZombieSurvival_SFML
 			sprite.Scale = new Vector2f(1.0f, (float)windowsize.Y/(float)sky.Size.Y);
 			rendertexture.Draw(sprite);
 			
-			sprite = new Sprite(floor, new IntRect((int)xpos, 0, windowsize.X, windowsize.Y));
+			//Draw floor
+			//Get walk position
+			int walkpos = (int)(((int)player.GetFloorMovement()*1.5)%floor.Size.Y);
+			sprite = new Sprite(floor, new IntRect((int)xpos, walkpos, windowsize.X, windowsize.Y+walkpos));
 			brightness = (byte)floorbrightness;
 			sprite.Color = new Color(brightness, brightness, brightness);
 			sprite.Position = new Vector2f(0, player.GetYView());
